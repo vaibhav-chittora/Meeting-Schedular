@@ -10,7 +10,7 @@ function Header() {
     return (
         <nav className='mx-auto py-2 px-4 flex justify-between items-center shadow-md border-b-2'>
             <Link href={"/"} className='flex items-center'>
-                <Image src='../public/files.svg'
+                <Image src='/logo.png'
                     height="60"
                     width="150"
                     alt='Schedular Logo'
