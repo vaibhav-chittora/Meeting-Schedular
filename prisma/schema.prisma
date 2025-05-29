@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  clerkUserId  String        @unique
+  email        String        @unique
+  username     String        @unique
+  name         String?
+  imageUrl     String?
+  events       Event[]       @relation("UserEvents")
+  bookings     Booking[]     @relation("UserBookings")
+  Availability Availability?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Event {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  duration    Int
+  userId      String    @db.ObjectId
+  user        User      @relation("UserEvents", fields: [userId], references: [id])
+  booking     Booking[]
+  isPrivate   Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Booking {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  eventId        String   @db.ObjectId
+  event          Event    @relation(fields: [eventId], references: [id])
+  userId         String   @db.ObjectId
+  user           User     @relation("UserBookings", fields: [userId], references: [id])
+  name           String
+  email          String
+  additionalInfo String?
+  startTime      DateTime
+  endTime        DateTime
+  meetLink       String
+  googleEventId  String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Availability {
+  id        String            @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String            @unique @db.ObjectId
+  user      User              @relation(fields: [userId], references: [id])
+  days      DayAvailability[]
+  timeGap   Int
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model DayAvailability {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  availabilityId String       @db.ObjectId
+  day            DayOfWeek
+  startTime      DateTime
+  endTime        DateTime
+  Availability   Availability @relation(fields: [availabilityId], references: [id])
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
