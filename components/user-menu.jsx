@@ -1,4 +1,4 @@
-"Use Client"
+"use client"
 
 import { UserButton } from '@clerk/nextjs'
 import { ChartNoAxesGantt } from 'lucide-react'
