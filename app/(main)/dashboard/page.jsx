@@ -1,4 +1,4 @@
-'use client'
+"use client"
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -8,6 +8,9 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { usernameSchema } from '@/app/lib/zodValidators'
 import { useEffect } from 'react'
+import { updateUsername } from '@/actions/users'
+import { BarLoader } from 'react-spinners'
+import useFetch from '@/hooks/use-Fetch'
 
 
 const Dashboard = () => {
@@ -19,7 +22,12 @@ const Dashboard = () => {
         setValue("username", user?.username)
     }, [isLoaded])
 
-    const onSubmit = async () => { }
+    const { error, loading, fn: updateUsernameFunction } = useFetch(updateUsername)
+
+    const onSubmit = async (data) => {
+        updateUsernameFunction(data?.username)
+    }
+
 
     return (
         <div className='space-y-8'>
@@ -57,7 +65,15 @@ const Dashboard = () => {
                                     {errors.username.message}
                                 </p>
                             )}
+                            {error && (
+                                <p className='text-red-500 text-sm mt-1'>
+                                    {error?.message}
+                                </p>
+                            )}
                         </div>
+
+
+                        {loading && <BarLoader className='mb-4 ' width={'100%'} color='#36d7b7' />}
                         <Button type='submit'>
                             Update
                         </Button>
